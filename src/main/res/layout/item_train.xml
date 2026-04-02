@@ -1,0 +1,92 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.cardview.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_marginHorizontal="16dp"
+    android:layout_marginVertical="8dp"
+    app:cardCornerRadius="16dp"
+    app:cardElevation="4dp"
+    app:cardBackgroundColor="#FFFFFF">
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:padding="16dp">
+
+        <TextView
+            android:id="@+id/tvTrainName"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="12001 - SHATABDI EXP"
+            android:textColor="#0A1628"
+            android:textSize="18sp"
+            android:textStyle="bold" />
+
+        <TextView
+            android:id="@+id/tvTimeInfo"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/tvTrainName"
+            android:layout_marginTop="4dp"
+            android:text="Departs: 10:00 AM | Arrives: 04:00 PM"
+            android:textColor="#90A4AE"
+            android:textSize="14sp" />
+
+        <View
+            android:id="@+id/divider"
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:layout_below="@id/tvTimeInfo"
+            android:layout_marginTop="12dp"
+            android:layout_marginBottom="12dp"
+            android:background="#F0F4F8" />
+
+        <TextView
+            android:id="@+id/tvPriceLabel"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/divider"
+            android:text="Fare"
+            android:textColor="#90A4AE"
+            android:textSize="12sp" />
+
+        <TextView
+            android:id="@+id/tvPrice"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/tvPriceLabel"
+            android:text="₹ 0"
+            android:textColor="#0A1628"
+            android:textSize="20sp"
+            android:textStyle="bold" />
+
+        <TextView
+            android:id="@+id/tvAvailability"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/divider"
+            android:layout_toStartOf="@id/btnBook"
+            android:layout_marginEnd="16dp"
+            android:layout_marginTop="14dp"
+            android:paddingHorizontal="12dp"
+            android:paddingVertical="4dp"
+            android:text="AVL 120"
+            android:textColor="#388E3C"
+            android:textSize="15sp"
+            android:textStyle="bold" />
+
+        <Button
+            android:id="@+id/btnBook"
+            android:layout_width="100dp"
+            android:layout_height="48dp"
+            android:layout_below="@id/divider"
+            android:layout_alignParentEnd="true"
+            android:backgroundTint="#FF6B35"
+            android:text="Book"
+            android:textColor="#FFFFFF"
+            android:textSize="14sp"
+            android:textStyle="bold" />
+
+    </RelativeLayout>
+</androidx.cardview.widget.CardView>
