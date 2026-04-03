@@ -3,9 +3,11 @@ package com.tanmay.Train_ticket_Reservation_System;
 import java.util.List;
 import retrofit2.Call;
 import retrofit2.http.Body;
+import retrofit2.http.DELETE;
 import retrofit2.http.GET;
 import retrofit2.http.Header;
 import retrofit2.http.POST;
+import retrofit2.http.Path;
 import retrofit2.http.Query;
 
 public interface TrainApi {
@@ -29,12 +31,23 @@ public interface TrainApi {
     @POST("/auth/google")
     Call<AuthResponse> googleLogin(@Body GoogleLoginRequest request);
 
-    @POST("/bookTicket")
-    Call<BookingResponse> bookTicket(@Header("Authorization") String token, @Body BookTicketRequest request);
+    // 🌟 FAANG UPDATE: 3 parameters (token, idempotencyKey, request) and new REST URL
+    @POST("/api/bookings")
+    Call<BookingResponse> bookTicket(
+            @Header("Authorization") String token,
+            @Header("x-idempotency-key") String idempotencyKey,
+            @Body BookTicketRequest request
+    );
 
-    // 🌟 THE MISSING GET TICKETS ROUTE
     @GET("/myTickets")
     Call<List<Ticket>> getMyTickets(@Header("Authorization") String token);
+
+    // 🌟 FAANG UPDATE: New Cancel Ticket Route
+    @DELETE("/cancelTicket/{pnr}")
+    Call<CancelResponse> cancelTicket(
+            @Header("Authorization") String token,
+            @Path("pnr") String pnr
+    );
 
 
     // ==========================================
@@ -117,7 +130,6 @@ public interface TrainApi {
         public String status;
     }
 
-    // 🌟 THE MISSING TICKET MODEL
     class Ticket {
         public String trainNumber;
         public String trainName;
@@ -127,5 +139,12 @@ public interface TrainApi {
         public String pnr;
         public String status;
         public int totalPrice;
+    }
+
+    // 🌟 FAANG UPDATE: Cancel Response Model
+    class CancelResponse {
+        public String message;
+        public double refundAmount;
+        public String status;
     }
 }
