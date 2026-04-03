@@ -10,9 +10,6 @@ import retrofit2.http.Query;
 
 public interface TrainApi {
 
-    // ==========================================
-    // 1. TRAIN SEARCH ROUTES
-    // ==========================================
     @GET("/searchStation")
     Call<List<Station>> searchStations(@Query("searchQuery") String query);
 
@@ -23,9 +20,6 @@ public interface TrainApi {
             @Query("date") String date
     );
 
-    // ==========================================
-    // 2. AUTHENTICATION ROUTES
-    // ==========================================
     @POST("/login")
     Call<AuthResponse> login(@Body LoginRequest request);
 
@@ -35,17 +29,18 @@ public interface TrainApi {
     @POST("/auth/google")
     Call<AuthResponse> googleLogin(@Body GoogleLoginRequest request);
 
-    // ==========================================
-    // 3. BOOKING ROUTES
-    // ==========================================
     @POST("/bookTicket")
     Call<BookingResponse> bookTicket(@Header("Authorization") String token, @Body BookTicketRequest request);
 
+    // 🌟 THE MISSING GET TICKETS ROUTE
+    @GET("/myTickets")
+    Call<List<Ticket>> getMyTickets(@Header("Authorization") String token);
+
+
     // ==========================================
-    // 4. DTO CLASSES (Data Models)
+    // DTO CLASSES (Data Models)
     // ==========================================
 
-    // --- Train Models ---
     class Station {
         public String name;
         public String code;
@@ -58,10 +53,9 @@ public interface TrainApi {
         public String departureTime;
         public String arrivalTime;
         public String availability;
-        public int price; // Real price from MongoDB
+        public int price;
     }
 
-    // --- Auth Models ---
     class LoginRequest {
         public String email;
         public String password;
@@ -101,7 +95,6 @@ public interface TrainApi {
         public String email;
     }
 
-    // --- Booking Models ---
     class BookTicketRequest {
         public String trainNumber;
         public String trainName;
@@ -122,5 +115,17 @@ public interface TrainApi {
         public String message;
         public String pnr;
         public String status;
+    }
+
+    // 🌟 THE MISSING TICKET MODEL
+    class Ticket {
+        public String trainNumber;
+        public String trainName;
+        public String source;
+        public String destination;
+        public String date;
+        public String pnr;
+        public String status;
+        public int totalPrice;
     }
 }

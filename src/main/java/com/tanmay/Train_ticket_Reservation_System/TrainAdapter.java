@@ -13,10 +13,16 @@ import java.util.List;
 
 public class TrainAdapter extends RecyclerView.Adapter<TrainAdapter.TrainViewHolder> {
 
-    private List<TrainApi.Train> trainList;
+    private final List<TrainApi.Train> trainList;
+    private final String source;
+    private final String dest;
+    private final String date;
 
-    public TrainAdapter(List<TrainApi.Train> trainList) {
+    public TrainAdapter(List<TrainApi.Train> trainList, String source, String dest, String date) {
         this.trainList = trainList;
+        this.source = source;
+        this.dest = dest;
+        this.date = date;
     }
 
     @NonNull
@@ -34,34 +40,29 @@ public class TrainAdapter extends RecyclerView.Adapter<TrainAdapter.TrainViewHol
         holder.tvTimeInfo.setText("Departs: " + train.departureTime + " | Arrives: " + train.arrivalTime);
         holder.tvPrice.setText("₹ " + train.price);
 
-        // Handle Availability Colors
         holder.tvAvailability.setText(train.availability);
         if (train.availability.startsWith("AVL")) {
-            holder.tvAvailability.setTextColor(Color.parseColor("#388E3C")); // Green
+            holder.tvAvailability.setTextColor(Color.parseColor("#388E3C"));
             holder.btnBook.setEnabled(true);
             holder.btnBook.setAlpha(1.0f);
         } else if (train.availability.startsWith("WL")) {
-            holder.tvAvailability.setTextColor(Color.parseColor("#F57C00")); // Orange
+            holder.tvAvailability.setTextColor(Color.parseColor("#F57C00"));
             holder.btnBook.setEnabled(true);
             holder.btnBook.setAlpha(1.0f);
         } else {
-            holder.tvAvailability.setTextColor(Color.parseColor("#D32F2F")); // Red
-            holder.btnBook.setEnabled(false); // Disable button if REGRET/Sold Out
+            holder.tvAvailability.setTextColor(Color.parseColor("#D32F2F"));
+            holder.btnBook.setEnabled(false);
             holder.btnBook.setAlpha(0.5f);
         }
 
-        // 🌟 THIS IS THE FIX: Open the Booking Page when clicked!
         holder.btnBook.setOnClickListener(v -> {
             Intent intent = new Intent(v.getContext(), BookingActivity.class);
             intent.putExtra("TRAIN_NUM", train.trainNumber);
             intent.putExtra("TRAIN_NAME", train.trainName);
             intent.putExtra("PRICE", train.price);
-
-            // Passing default placeholders for now, these can be passed from SearchFragment later!
-            intent.putExtra("DATE", "2026-05-12");
-            intent.putExtra("SOURCE", "SELECTED_SOURCE");
-            intent.putExtra("DEST", "SELECTED_DEST");
-
+            intent.putExtra("DATE", date);
+            intent.putExtra("SOURCE", source);
+            intent.putExtra("DEST", dest);
             v.getContext().startActivity(intent);
         });
     }

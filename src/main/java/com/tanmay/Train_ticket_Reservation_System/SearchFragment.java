@@ -124,6 +124,8 @@ public class SearchFragment extends Fragment {
         progressBar.setVisibility(View.VISIBLE);
         recyclerView.setVisibility(View.GONE);
 
+
+
         trainApi.getTrains(sourceCode, destCode, date).enqueue(new Callback<List<TrainApi.Train>>() {
             @Override
             public void onResponse(Call<List<TrainApi.Train>> call, Response<List<TrainApi.Train>> response) {
@@ -135,7 +137,10 @@ public class SearchFragment extends Fragment {
                         Toast.makeText(requireContext(), "No trains found for this route", Toast.LENGTH_LONG).show();
                     } else {
                         recyclerView.setVisibility(View.VISIBLE);
-                        adapter = new TrainAdapter(trainList);
+
+                        // 🌟 THE FIX IS HERE: We now pass all 4 variables!
+                        adapter = new TrainAdapter(trainList, sourceCode, destCode, date);
+
                         recyclerView.setAdapter(adapter);
                     }
                 } else {
