@@ -4,6 +4,7 @@ import android.app.DatePickerDialog;
 import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextWatcher;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -47,26 +48,30 @@ public class SearchFragment extends Fragment {
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
-        etSource = view.findViewById(R.id.etSource);
-        etDestination = view.findViewById(R.id.etDestination);
-        etDate = view.findViewById(R.id.etDate);
-        btnSearch = view.findViewById(R.id.btnSearch);
-        recyclerView = view.findViewById(R.id.recyclerView);
-        progressBar = view.findViewById(R.id.progressBar);
+        try {
+            etSource = view.findViewById(R.id.etSource);
+            etDestination = view.findViewById(R.id.etDestination);
+            etDate = view.findViewById(R.id.etDate);
+            btnSearch = view.findViewById(R.id.btnSearch);
+            recyclerView = view.findViewById(R.id.recyclerView);
+            progressBar = view.findViewById(R.id.progressBar);
 
-        recyclerView.setLayoutManager(new LinearLayoutManager(requireContext()));
-        trainApi = RetrofitClient.getApiService();
+            recyclerView.setLayoutManager(new LinearLayoutManager(requireContext()));
+            trainApi = RetrofitClient.getApiService();
 
-        ArrayAdapter<TrainApi.Station> sourceAdapter = new ArrayAdapter<>(requireContext(), android.R.layout.simple_dropdown_item_1line);
-        ArrayAdapter<TrainApi.Station> destAdapter = new ArrayAdapter<>(requireContext(), android.R.layout.simple_dropdown_item_1line);
-        etSource.setAdapter(sourceAdapter);
-        etDestination.setAdapter(destAdapter);
+            ArrayAdapter<TrainApi.Station> sourceAdapter = new ArrayAdapter<>(requireContext(), android.R.layout.simple_dropdown_item_1line);
+            ArrayAdapter<TrainApi.Station> destAdapter = new ArrayAdapter<>(requireContext(), android.R.layout.simple_dropdown_item_1line);
+            etSource.setAdapter(sourceAdapter);
+            etDestination.setAdapter(destAdapter);
 
-        setupLiveSearch(etSource, sourceAdapter);
-        setupLiveSearch(etDestination, destAdapter);
+            setupLiveSearch(etSource, sourceAdapter);
+            setupLiveSearch(etDestination, destAdapter);
 
-        etDate.setOnClickListener(v -> showDatePicker());
-        btnSearch.setOnClickListener(v -> performSearch());
+            etDate.setOnClickListener(v -> showDatePicker());
+            btnSearch.setOnClickListener(v -> performSearch());
+        } catch (Exception e) {
+            Log.e("SearchFragment", "UI Setup Error", e);
+        }
     }
 
     private void setupLiveSearch(AutoCompleteTextView textView, ArrayAdapter<TrainApi.Station> adapter) {
@@ -77,6 +82,7 @@ public class SearchFragment extends Fragment {
                     trainApi.searchStations(s.toString()).enqueue(new Callback<List<TrainApi.Station>>() {
                         @Override
                         public void onResponse(Call<List<TrainApi.Station>> call, Response<List<TrainApi.Station>> response) {
+                            if (!isAdded() || getContext() == null) return; // 🌟 SAFETY CHECK
                             if (response.isSuccessful() && response.body() != null) {
                                 adapter.clear();
                                 adapter.addAll(response.body());
@@ -109,50 +115,54 @@ public class SearchFragment extends Fragment {
     }
 
     private void performSearch() {
-        String rawSource = etSource.getText().toString().trim();
-        String rawDest = etDestination.getText().toString().trim();
-        String date = etDate.getText().toString().trim();
+        try {
+            String rawSource = etSource.getText().toString().trim();
+            String rawDest = etDestination.getText().toString().trim();
+            String date = etDate.getText().toString().trim();
 
-        if (rawSource.isEmpty() || rawDest.isEmpty() || date.isEmpty()) {
-            Toast.makeText(requireContext(), "Please fill all fields", Toast.LENGTH_SHORT).show();
-            return;
-        }
+            if (rawSource.isEmpty() || rawDest.isEmpty() || date.isEmpty()) {
+                Toast.makeText(getContext(), "Please fill all fields", Toast.LENGTH_SHORT).show();
+                return;
+            }
 
-        String sourceCode = extractStationCode(rawSource);
-        String destCode = extractStationCode(rawDest);
+            String sourceCode = extractStationCode(rawSource);
+            String destCode = extractStationCode(rawDest);
 
-        progressBar.setVisibility(View.VISIBLE);
-        recyclerView.setVisibility(View.GONE);
+            progressBar.setVisibility(View.VISIBLE);
+            recyclerView.setVisibility(View.GONE);
 
+            trainApi.getTrains(sourceCode, destCode, date).enqueue(new Callback<List<TrainApi.Train>>() {
+                @Override
+                public void onResponse(Call<List<TrainApi.Train>> call, Response<List<TrainApi.Train>> response) {
+                    if (!isAdded() || getContext() == null) return; // 🌟 SAFETY CHECK: Stop if user changed tabs!
 
+                    progressBar.setVisibility(View.GONE);
 
-        trainApi.getTrains(sourceCode, destCode, date).enqueue(new Callback<List<TrainApi.Train>>() {
-            @Override
-            public void onResponse(Call<List<TrainApi.Train>> call, Response<List<TrainApi.Train>> response) {
-                progressBar.setVisibility(View.GONE);
-
-                if (response.isSuccessful() && response.body() != null) {
-                    List<TrainApi.Train> trainList = response.body();
-                    if (trainList.isEmpty()) {
-                        Toast.makeText(requireContext(), "No trains found for this route", Toast.LENGTH_LONG).show();
+                    if (response.isSuccessful() && response.body() != null) {
+                        List<TrainApi.Train> trainList = response.body();
+                        if (trainList.isEmpty()) {
+                            Toast.makeText(getContext(), "No trains found for this route", Toast.LENGTH_LONG).show();
+                        } else {
+                            recyclerView.setVisibility(View.VISIBLE);
+                            adapter = new TrainAdapter(trainList, sourceCode, destCode, date);
+                            recyclerView.setAdapter(adapter);
+                        }
                     } else {
-                        recyclerView.setVisibility(View.VISIBLE);
-
-                        // 🌟 THE FIX IS HERE: We now pass all 4 variables!
-                        adapter = new TrainAdapter(trainList, sourceCode, destCode, date);
-
-                        recyclerView.setAdapter(adapter);
+                        Toast.makeText(getContext(), "Server error or no trains available.", Toast.LENGTH_SHORT).show();
                     }
-                } else {
-                    Toast.makeText(requireContext(), "Server error or no trains available.", Toast.LENGTH_SHORT).show();
                 }
-            }
 
-            @Override
-            public void onFailure(Call<List<TrainApi.Train>> call, Throwable t) {
-                progressBar.setVisibility(View.GONE);
-                Toast.makeText(requireContext(), "Connection failed: " + t.getMessage(), Toast.LENGTH_LONG).show();
-            }
-        });
+                @Override
+                public void onFailure(Call<List<TrainApi.Train>> call, Throwable t) {
+                    if (!isAdded() || getContext() == null) return; // 🌟 SAFETY CHECK
+
+                    progressBar.setVisibility(View.GONE);
+                    Toast.makeText(getContext(), "Connection failed: " + t.getMessage(), Toast.LENGTH_LONG).show();
+                }
+            });
+        } catch (Exception e) {
+            Log.e("SearchFragment", "Search Crash", e);
+            Toast.makeText(getContext(), "Error: " + e.getMessage(), Toast.LENGTH_LONG).show();
+        }
     }
 }

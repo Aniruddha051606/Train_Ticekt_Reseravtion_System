@@ -5,9 +5,9 @@
     android:layout_height="wrap_content"
     android:layout_marginHorizontal="16dp"
     android:layout_marginVertical="8dp"
-    app:cardBackgroundColor="#FFFFFF"
     app:cardCornerRadius="16dp"
-    app:cardElevation="4dp">
+    app:cardElevation="4dp"
+    app:cardBackgroundColor="#FFFFFF">
 
     <RelativeLayout
         android:layout_width="match_parent"
@@ -15,42 +15,21 @@
         android:padding="16dp">
 
         <TextView
-            android:id="@+id/tvTicketPnr"
+            android:id="@+id/tvTrainName"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="PNR: 1234567890"
-            android:textColor="#FF6B35"
-            android:textSize="14sp"
-            android:textStyle="bold" />
-
-        <TextView
-            android:id="@+id/tvTicketStatus"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_alignParentEnd="true"
-            android:text="CONFIRMED"
-            android:textColor="#388E3C"
-            android:textSize="14sp"
-            android:textStyle="bold" />
-
-        <TextView
-            android:id="@+id/tvTicketTrain"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_below="@id/tvTicketPnr"
-            android:layout_marginTop="8dp"
             android:text="12001 - SHATABDI EXP"
             android:textColor="#0A1628"
             android:textSize="18sp"
             android:textStyle="bold" />
 
         <TextView
-            android:id="@+id/tvTicketRoute"
+            android:id="@+id/tvTimeInfo"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_below="@id/tvTicketTrain"
+            android:layout_below="@id/tvTrainName"
             android:layout_marginTop="4dp"
-            android:text="PUNE ➔ MUMBAI | Date: 2026-05-12"
+            android:text="Departs: 10:00 AM | Arrives: 04:00 PM"
             android:textColor="#90A4AE"
             android:textSize="14sp" />
 
@@ -58,31 +37,56 @@
             android:id="@+id/divider"
             android:layout_width="match_parent"
             android:layout_height="1dp"
-            android:layout_below="@id/tvTicketRoute"
-            android:layout_marginVertical="12dp"
+            android:layout_below="@id/tvTimeInfo"
+            android:layout_marginTop="12dp"
+            android:layout_marginBottom="12dp"
             android:background="#F0F4F8" />
 
         <TextView
-            android:id="@+id/tvTicketPrice"
+            android:id="@+id/tvPriceLabel"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_below="@id/divider"
-            android:layout_centerVertical="true"
-            android:text="₹ 450"
+            android:text="Fare"
+            android:textColor="#90A4AE"
+            android:textSize="12sp" />
+
+        <TextView
+            android:id="@+id/tvPrice"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/tvPriceLabel"
+            android:text="₹ 0"
             android:textColor="#0A1628"
             android:textSize="20sp"
             android:textStyle="bold" />
 
-        <Button
-            android:id="@+id/btnDownloadTicket"
+        <TextView
+            android:id="@+id/tvAvailability"
             android:layout_width="wrap_content"
-            android:layout_height="45dp"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/divider"
+            android:layout_toStartOf="@id/btnBook"
+            android:layout_marginEnd="16dp"
+            android:layout_marginTop="14dp"
+            android:paddingHorizontal="12dp"
+            android:paddingVertical="4dp"
+            android:text="AVL 120"
+            android:textColor="#388E3C"
+            android:textSize="15sp"
+            android:textStyle="bold" />
+
+        <Button
+            android:id="@+id/btnBook"
+            android:layout_width="100dp"
+            android:layout_height="48dp"
             android:layout_below="@id/divider"
             android:layout_alignParentEnd="true"
-            android:backgroundTint="#4CAF50"
-            android:text="Download PDF"
+            android:backgroundTint="#FF6B35"
+            android:text="Book"
             android:textColor="#FFFFFF"
-            android:textSize="12sp" />
+            android:textSize="14sp"
+            android:textStyle="bold" />
 
     </RelativeLayout>
 </androidx.cardview.widget.CardView>
