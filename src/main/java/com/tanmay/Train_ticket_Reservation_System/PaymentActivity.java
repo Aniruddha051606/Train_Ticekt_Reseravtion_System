@@ -69,7 +69,8 @@ public class PaymentActivity extends AppCompatActivity {
                 } else {
                     btnPayNow.setText("Pay Securely");
                     btnPayNow.setEnabled(true);
-                    Toast.makeText(PaymentActivity.this, "❌ Server Error. You were not charged.", Toast.LENGTH_LONG).show();
+                    Toast.makeText(PaymentActivity.this, "❌ Server Error: " + response.code(), Toast.LENGTH_LONG).show();
+
                 }
             }
 
