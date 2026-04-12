@@ -121,7 +121,7 @@ public class TicketAdapter extends RecyclerView.Adapter<TicketAdapter.TicketView
         paint.setTextSize(24f);
         paint.setFakeBoldText(true);
         paint.setColor(Color.parseColor("#0A1628"));
-        canvas.drawText("RAILCONNECT E-TICKET", 70, 50, paint);
+        canvas.drawText("Train Ticket Reservation System E-TICKET", 50, 50, paint);
 
         paint.setTextSize(16f);
         paint.setFakeBoldText(false);
