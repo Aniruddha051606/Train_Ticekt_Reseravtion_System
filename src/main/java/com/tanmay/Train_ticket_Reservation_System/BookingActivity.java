@@ -1,6 +1,7 @@
 package com.tanmay.Train_ticket_Reservation_System;
 
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.widget.Button;
 import android.widget.EditText;
@@ -25,7 +26,6 @@ public class BookingActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_booking);
 
-        // Map the new premium UI
         tvBookingTrainName = findViewById(R.id.tvBookingTrainName);
         tvBookingDate = findViewById(R.id.tvBookingDate);
         tvSource = findViewById(R.id.tvSource);
@@ -52,6 +52,14 @@ public class BookingActivity extends AppCompatActivity {
         tvSource.setText(source);
         tvDest.setText(destination);
         tvFinalPrice.setText("₹ " + ticketPrice);
+
+        // Fix: Auto-fill Name and Email from SharedPreferences
+        SharedPreferences prefs = getSharedPreferences("AppPrefs", MODE_PRIVATE);
+        String userName = prefs.getString("name", prefs.getString("user_name", ""));
+        String userEmail = prefs.getString("email", prefs.getString("user_email", ""));
+
+        if (!userName.isEmpty()) etPassengerName.setText(userName);
+        if (!userEmail.isEmpty()) etContactEmail.setText(userEmail);
 
         btnConfirmBooking.setOnClickListener(v -> confirmBooking());
     }

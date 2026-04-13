@@ -36,25 +36,25 @@ public class TrainAdapter extends RecyclerView.Adapter<TrainAdapter.TrainViewHol
     public void onBindViewHolder(@NonNull TrainViewHolder holder, int position) {
         TrainApi.Train train = trainList.get(position);
 
-        holder.tvTrainName.setText(train.trainNumber + " - " + train.trainName);
-        holder.tvTimeInfo.setText("Departs: " + train.departureTime + " | Arrives: " + train.arrivalTime);
-        holder.tvPrice.setText("₹ " + train.price);
+        holder.tvTrainName.setText(train.trainName);
+        holder.tvTrainNumber.setText("#" + train.trainNumber);
+        holder.tvDepartureTime.setText(train.departureTime);
+        holder.tvArrivalTime.setText(train.arrivalTime);
+        holder.tvSource.setText(source != null ? source.toUpperCase() : "");
+        holder.tvDestination.setText(dest != null ? dest.toUpperCase() : "");
+        holder.tvPrice.setText("₹" + train.price);
+        holder.tvDuration.setText(train.availability);
 
-        holder.tvAvailability.setText(train.availability);
-        if (train.availability.startsWith("AVL")) {
-            holder.tvAvailability.setTextColor(Color.parseColor("#388E3C"));
+        if (train.availability != null && train.availability.startsWith("AVL")) {
+            holder.tvDuration.setBackgroundColor(Color.parseColor("#E8F5E9"));
+            holder.tvDuration.setTextColor(Color.parseColor("#2E7D32"));
             holder.btnBook.setEnabled(true);
-            holder.btnBook.setAlpha(1.0f);
-        } else if (train.availability.startsWith("WL")) {
-            holder.tvAvailability.setTextColor(Color.parseColor("#F57C00"));
-            holder.btnBook.setEnabled(true);
-            holder.btnBook.setAlpha(1.0f);
         } else {
-            holder.tvAvailability.setTextColor(Color.parseColor("#D32F2F"));
-            holder.btnBook.setEnabled(false);
-            holder.btnBook.setAlpha(0.5f);
+            holder.tvDuration.setBackgroundColor(Color.parseColor("#FFF3E0"));
+            holder.tvDuration.setTextColor(Color.parseColor("#E65100"));
         }
 
+        // Route to your existing BookingActivity!
         holder.btnBook.setOnClickListener(v -> {
             Intent intent = new Intent(v.getContext(), BookingActivity.class);
             intent.putExtra("TRAIN_NUM", train.trainNumber);
@@ -73,14 +73,18 @@ public class TrainAdapter extends RecyclerView.Adapter<TrainAdapter.TrainViewHol
     }
 
     public static class TrainViewHolder extends RecyclerView.ViewHolder {
-        TextView tvTrainName, tvTimeInfo, tvAvailability, tvPrice;
+        TextView tvTrainName, tvTrainNumber, tvDuration, tvDepartureTime, tvSource, tvArrivalTime, tvDestination, tvPrice;
         Button btnBook;
 
         public TrainViewHolder(@NonNull View itemView) {
             super(itemView);
             tvTrainName = itemView.findViewById(R.id.tvTrainName);
-            tvTimeInfo = itemView.findViewById(R.id.tvTimeInfo);
-            tvAvailability = itemView.findViewById(R.id.tvAvailability);
+            tvTrainNumber = itemView.findViewById(R.id.tvTrainNumber);
+            tvDuration = itemView.findViewById(R.id.tvDuration);
+            tvDepartureTime = itemView.findViewById(R.id.tvDepartureTime);
+            tvSource = itemView.findViewById(R.id.tvSource);
+            tvArrivalTime = itemView.findViewById(R.id.tvArrivalTime);
+            tvDestination = itemView.findViewById(R.id.tvDestination);
             tvPrice = itemView.findViewById(R.id.tvPrice);
             btnBook = itemView.findViewById(R.id.btnBook);
         }

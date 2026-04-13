@@ -7,7 +7,6 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ProgressBar;
-import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
@@ -26,7 +25,7 @@ public class TicketsFragment extends Fragment {
 
     private RecyclerView rvTickets;
     private ProgressBar progressBarTickets;
-    private TextView tvNoTickets;
+    private View tvNoTickets; // <-- FIXED: Changed from TextView to generic View
 
     @Nullable
     @Override

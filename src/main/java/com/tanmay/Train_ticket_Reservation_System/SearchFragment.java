@@ -1,6 +1,8 @@
 package com.tanmay.Train_ticket_Reservation_System;
 
 import android.app.DatePickerDialog;
+import android.content.Context;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextWatcher;
@@ -13,6 +15,7 @@ import android.widget.AutoCompleteTextView;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ProgressBar;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
@@ -56,6 +59,16 @@ public class SearchFragment extends Fragment {
             recyclerView = view.findViewById(R.id.recyclerView);
             progressBar = view.findViewById(R.id.progressBar);
 
+            // Fix: Dynamic User Greeting
+            TextView tvGreeting = view.findViewById(R.id.tvGreeting);
+            SharedPreferences prefs = requireActivity().getSharedPreferences("AppPrefs", Context.MODE_PRIVATE);
+            // Check for "name" or "user_name" depending on how your Login saves it
+            String userName = prefs.getString("name", prefs.getString("user_name", "Passenger"));
+            if (tvGreeting != null) {
+                String firstName = userName.split(" ")[0]; // Get first name only
+                tvGreeting.setText("Namaste, " + firstName + "!\nWhere are you going today?");
+            }
+
             recyclerView.setLayoutManager(new LinearLayoutManager(requireContext()));
             trainApi = RetrofitClient.getApiService();
 
@@ -82,7 +95,7 @@ public class SearchFragment extends Fragment {
                     trainApi.searchStations(s.toString()).enqueue(new Callback<List<TrainApi.Station>>() {
                         @Override
                         public void onResponse(Call<List<TrainApi.Station>> call, Response<List<TrainApi.Station>> response) {
-                            if (!isAdded() || getContext() == null) return; // 🌟 SAFETY CHECK
+                            if (!isAdded() || getContext() == null) return;
                             if (response.isSuccessful() && response.body() != null) {
                                 adapter.clear();
                                 adapter.addAll(response.body());
@@ -134,7 +147,7 @@ public class SearchFragment extends Fragment {
             trainApi.getTrains(sourceCode, destCode, date).enqueue(new Callback<List<TrainApi.Train>>() {
                 @Override
                 public void onResponse(Call<List<TrainApi.Train>> call, Response<List<TrainApi.Train>> response) {
-                    if (!isAdded() || getContext() == null) return; // 🌟 SAFETY CHECK: Stop if user changed tabs!
+                    if (!isAdded() || getContext() == null) return;
 
                     progressBar.setVisibility(View.GONE);
 
@@ -154,7 +167,7 @@ public class SearchFragment extends Fragment {
 
                 @Override
                 public void onFailure(Call<List<TrainApi.Train>> call, Throwable t) {
-                    if (!isAdded() || getContext() == null) return; // 🌟 SAFETY CHECK
+                    if (!isAdded() || getContext() == null) return;
 
                     progressBar.setVisibility(View.GONE);
                     Toast.makeText(getContext(), "Connection failed: " + t.getMessage(), Toast.LENGTH_LONG).show();
